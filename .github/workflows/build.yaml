@@ -23,7 +23,7 @@ jobs:
         
     - name: Build Solution (Release Win32)  
       run: |  
-        msbuild WeChatHook.sln /p:Configuration=Release /p:Platform=x86  
+        msbuild WeChatHook.sln /p:Configuration=Release /p:Platform=x86 /p:PreprocessorDefinitions="_CRT_SECURE_NO_WARNINGS"
           
     - name: Prepare artifacts  
       run: |  
