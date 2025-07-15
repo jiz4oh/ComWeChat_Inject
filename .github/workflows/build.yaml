@@ -1,0 +1,37 @@
+name: Build
+  
+on:  
+  workflow_dispatch:
+  push:  
+    branches: [ main, master ]  
+  pull_request:  
+    branches: [ main, master ]  
+  
+jobs:  
+  build:  
+    runs-on: windows-latest  
+      
+    steps:  
+    - name: Checkout code  
+      uses: actions/checkout@v4  
+        
+    - name: Setup MSBuild  
+      uses: microsoft/setup-msbuild@v1.3  
+        
+    - name: Setup NuGet  
+      uses: nuget/setup-nuget@v1  
+        
+    - name: Build Solution (Release Win32)  
+      run: |  
+        msbuild WeChatHook.sln /p:Configuration=Release /p:Platform=Win32  
+          
+    - name: Prepare artifacts  
+      run: |  
+        mkdir artifacts  
+        copy "Release\WeChatHook.exe" artifacts\WeChatHook.exe  
+          
+    - name: Upload WeChatHook.exe artifacts  
+      uses: actions/upload-artifact@v4  
+      with:  
+        name: WeChatHook-executables  
+        path: artifacts/
