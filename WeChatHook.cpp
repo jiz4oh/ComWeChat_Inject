@@ -7,15 +7,16 @@
 #include "utils.h"
 
 int GetPortFromEnv() {  
-    const char* envPort = getenv("WECHAT_HOOK_PORT");  
-    if (envPort != nullptr) {  
+    char* envPort = nullptr;  
+    size_t len = 0;  
+    if (_dupenv_s(&envPort, &len, "WECHAT_HOOK_PORT") == 0 && envPort != nullptr) {  
         int port = atoi(envPort);  
-        // 验证端口范围  
+        free(envPort);  
         if (port > 0 && port <= 65535) {  
             return port;  
         }  
     }  
-    return 18888; // 默认端口  
+    return 18888;  
 }
 
 // 此代码模块中包含的函数的前向声明:
