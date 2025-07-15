@@ -6,7 +6,17 @@
 #include <Windows.h>
 #include "utils.h"
 
-int PORT = 18888;
+int GetPortFromEnv() {  
+    const char* envPort = getenv("WECHAT_HOOK_PORT");  
+    if (envPort != nullptr) {  
+        int port = atoi(envPort);  
+        // 验证端口范围  
+        if (port > 0 && port <= 65535) {  
+            return port;  
+        }  
+    }  
+    return 18888; // 默认端口  
+}
 
 // 此代码模块中包含的函数的前向声明:
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
@@ -25,7 +35,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	}
 	else
 	{
-		result = StartListen(PID, PORT);
+		result = StartListen(PID, GetPortFromEnv());
 		if(result == 0)
 		{
 			return 0;
@@ -48,7 +58,7 @@ INT_PTR CALLBACK DialogProc(_In_ HWND hDlg, _In_ UINT message, _In_ WPARAM wPara
 		if (LOWORD(wParam) == INJECT)
 		{
 			DWORD PID = ProcessNameFindPID(WeChatProcessName);
-			StartListen(PID, PORT);
+			StartListen(PID, GetPortFromEnv());
 		}
 		if (LOWORD(wParam) == UNJECT)
 		{
