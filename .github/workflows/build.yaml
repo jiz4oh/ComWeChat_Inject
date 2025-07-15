@@ -27,11 +27,25 @@ jobs:
           
     - name: Prepare artifacts  
       run: |  
-        mkdir artifacts  
-        copy "Release\WeChatHook.exe" artifacts\WeChatHook.exe  
+        copy "Release\WeChatHook.exe" WeChatHook.exe  
           
-    - name: Upload WeChatHook.exe artifacts  
-      uses: actions/upload-artifact@v4  
+    - name: Create Release  
+      id: create_release  
+      uses: actions/create-release@v1  
+      env:  
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
       with:  
-        name: WeChatHook-executables  
-        path: artifacts/
+        tag_name: ${{ github.ref }}  
+        release_name: Release ${{ github.ref }}  
+        draft: false  
+        prerelease: false
+          
+    - name: Upload x86 executable  
+      uses: actions/upload-release-asset@v1  
+      env:  
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+      with:  
+        upload_url: ${{ steps.create_release.outputs.upload_url }}  
+        asset_path: WeChatHook.exe  
+        asset_name: WeChatHook.exe  
+        asset_content_type: application/octet-stream  
